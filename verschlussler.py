@@ -56,16 +56,29 @@ while True:
 
     if eingabe == "v":
         while True:
-            mit_ohne_key = input("Hast du einen Schlüssel? (j/n): ").lower()
-            if mit_ohne_key in ("j", "n"):
-                print("Eingabe akzeptiert.")
-                break
-            else:
-                print("Ungültige Eingabe! Bitte nur 'j' oder 'n' eingeben.")
-        if mit_ohne_key == "j":
-            wenn_schlussel_da_verschlusseln()
-        elif mit_ohne_key == "n":
-            wenn_kein_schlussel_verschlusseln()
+                mit_ohne_key = input("Hast du einen Schlüssel? (j/n): ").lower()
+                if mit_ohne_key not in ("j", "n"):
+                    print("Ungültige Eingabe! Bitte nur 'j' oder 'n' eingeben.")
+                elif mit_ohne_key == "j":
+                    quelle = input("Möchtest du den Schlüssel aus einer Datei laden? (j/n): ").lower()
+                    if quelle == "j":
+                        schlussel = lade_schlussel()
+                    else:
+                        schlussel = input("Bitte gebe den Schlüssel ein: ").encode()
+                    text_zu_kodieren = input("Was möchtest du kodieren? ")
+                    verschlüsselter_text = verschlusseln(text_zu_kodieren, schlussel)
+                    print(verschlüsselter_text)
+                    # Schreibe das Ergebnis als String in eine Datei
+                    schreibe_in_datei("output.txt", str(verschlüsselter_text), schlussel)
+                    break
+                elif mit_ohne_key == "n":
+                    wenn_kein_schlussel_verschlusseln()
+                    break # <<< MINIMALE ÄNDERUNG 1: HINZUGEFÜGT
+        # <<< MINIMALE ÄNDERUNG 2: DER FOLGENDE BLOCK WURDE ENTFERNT
+        # if mit_ohne_key == "j":
+        #     wenn_schlussel_da_verschlusseln()
+        # elif mit_ohne_key == "n":
+        #     wenn_kein_schlussel_verschlusseln()
 
     elif eingabe == "e":
         schluessel = lade_schlussel()
@@ -105,7 +118,7 @@ while True:
         except Exception as e:
             print("Fehler bei der Entschlüsselung:", e)
 
-    weiter = input("Noch etwas machen? j/n").lower()
+    weiter = input("Noch etwas machen? j/n ").lower()
     if weiter == "n":
         print("Programm zu Ende.")
         break
