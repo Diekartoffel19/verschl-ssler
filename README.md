@@ -1,4 +1,4 @@
-##So funktioniert es:
+# So funktioniert es:
 
 Um das Programm nutzen zu können, müssen Sie zunächst das Repository auf Ihren Computer klonen oder das Python-Skript herunterladen und in einem eigenen Ordner speichern. Ausserdem müssen Sie Python installiert haben und die requirements.txt mit dem folgenden Befehl installieren: pip install -r requirements.txt
 
