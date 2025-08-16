@@ -1,9 +1,13 @@
-So funktioniert es
+So funktioniert es:
 
 Um das Programm zu nutzen, müssen Sie zunächst das Repository auf Ihren Computer klonen oder das Python-Skript herunterladen und in einem eigenen Ordner speichern.
 
-Die Bedienung des Programms ist dann ganz einfach: Folgen Sie einfach den Anweisungen, die Ihnen angezeigt werden.
+Wenn Sie dieses README-File durchlesen und den Anweisungen im Programm folgen, sollte alles reibungslos laufen.
 
-Sobald eine Datei verschlüsselt ist, erhalten Sie zwei wichtige Dateien: die verschlüsselte Datei output.txt und den geheimen Schlüssel geheimer_schlussel.key. Die output.txt können Sie problemlos digital an Ihren Kontakt senden (z. B. per E-Mail).
+Sobald eine Datei verschlüsselt ist, werden zwei Dateien erstellt: der verschlüsselte Text in der „output.txt” und der geheime Schlüssel in der „geheimer_schlussel.key”. Die Datei „output.txt” können Sie problemlos verschicken oder weitergeben.
 
-Der entscheidende Punkt für die Sicherheit ist jedoch der Schlüssel. Diesen sollten Sie niemals über einen unsicheren Kanal versenden. Übergeben Sie den geheimer_schlussel.key stattdessen persönlich auf einem Speichermedium wie einem USB-Stick.
+Die .key-Datei jedoch nicht, da sie den Text entschlüsseln kann. Darum muss diese Datei auf sichere Weise, z. B. via USB-Stick, weitergegeben werden.
+
+All diese Sicherheitsmaßnahmen sind jedoch nur nötig, wenn es sich um etwas sehr Wichtiges handelt. Wenn Ihnen also etwas sehr wichtig ist, sollten Sie es der anderen Person einfach sagen. ;)
+
+Diese Bibliothek wird jedoch meist nicht zum Verschlüsseln von Nachrichten, sondern eher zum Sichern von Passwörtern, Datenbanken oder anderen sensiblen Informationen verwendet.
