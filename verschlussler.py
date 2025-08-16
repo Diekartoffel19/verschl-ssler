@@ -17,8 +17,8 @@ def verschlusseln(nachricht_zu_verschlusseln, key):
 # Neue Funktion: schreibt beliebigen Text in eine Datei
 def schreibe_in_datei(dateiname, text, key):
     with open(dateiname, "w", encoding="utf-8") as f:
-        f.write(f"Verschlüsselter Text: {text}\n")
-        f.write(f"Key: {key.decode()}\n")
+        f.write(f"{text}\n")
+        f.write(f"{key.decode()}\n")
 
 
 def nachricht_entschlusseln(verschlusselte_nachricht, key):
@@ -75,19 +75,46 @@ if eingabe == "v":
     elif mit_ohne_key == "n":
         wenn_kein_schlussel_verschlusseln()
 elif eingabe == "e":
-    quelle = input("Möchtest du die Daten aus output.txt verwenden? (j/n): ").lower()
-    if quelle == "j":
-        try:
-            with open("output.txt", "r", encoding="utf-8") as f:
-                zeilen = f.readlines()
-                verschluesselt = zeilen[0].split(": ", 1)[1].strip()
-                key = zeilen[1].split(": ", 1)[1].strip()
-            verschluesselt_bytes = eval(verschluesselt)
+    # Standard: Schlüssel aus .key-Datei, Text aus output.txt
+    schluessel = lade_schlussel()
+    with open("output.txt", "r", encoding="utf-8") as f:
+        zeilen = f.readlines()
+        verschluesselt = zeilen[0].strip()
+
+    # User kann optional eigenen Schlüssel/Text eingeben
+    eigene_eingabe = input("Möchtest du eigenen Schlüssel und/oder Text eingeben? (j/n): ").lower()
+
+    if eigene_eingabe == "j":
+        text_ent = input("Gib den verschlüsselten Text ein (Bytestring z.B. b'...' oder nur Inhalt, Enter für Standard): ")
+        key = input("Gib den Schlüssel ein (Enter für Standard): ")
+        # Text bestimmen
+        if text_ent:
+            if text_ent.startswith("b'") and text_ent.endswith("'"):
+                verschluesselt_bytes = eval(text_ent)
+            else:
+                verschluesselt_bytes = text_ent.encode()
+        else:
+            if verschluesselt.startswith("b'") and verschluesselt.endswith("'"):
+                verschluesselt_bytes = eval(verschluesselt)
+            else:
+                verschluesselt_bytes = verschluesselt.encode()
+        # Schlüssel bestimmen
+        if key:
             key_bytes = key.encode()
-            entschluesselt = nachricht_entschlusseln(verschluesselt_bytes, key_bytes)
-            print("Entschlüsselte Nachricht:", entschluesselt)
-        except Exception as e:
-            print("Fehler beim Lesen der Datei:", e)
+        else:
+            key_bytes = schluessel
+    else:
+        if verschluesselt.startswith("b'") and verschluesselt.endswith("'"):
+            verschluesselt_bytes = eval(verschluesselt)
+        else:
+            verschluesselt_bytes = verschluesselt.encode()
+        key_bytes = schluessel
+
+    try:
+        entschluesselt = nachricht_entschlusseln(verschluesselt_bytes, key_bytes)
+        print("Entschlüsselte Nachricht:", entschluesselt)
+    except Exception as e:
+        print("Fehler bei der Entschlüsselung:", e)
     else:
         text_ent = input("Was möchtest du entschlüsseln? (Bytestring z.B. b'...' oder nur Inhalt): ")
         key = input("Gib den Schlüssel ein: ")
@@ -102,4 +129,3 @@ elif eingabe == "e":
             print("Entschlüsselte Nachricht:", entschluesselt)
         except Exception as e:
             print("Fehler bei der Entschlüsselung:", e)
-

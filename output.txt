@@ -1,2 +1,0 @@
-Verschlüsselter Text: b'gAAAAABooE33-f1Qu3HGuj5C9Jh_6a1dXrXPTkkq04d-GPmugipVIClqC5hWXYw7PolztdFNHlA-WxRgO2r4JEqWthvizW1s8g=='
-Key: bGvXdBRq-5mE-1Zhiq4AkFHmkwxV0uVJ9LUwBLmp-fA=
