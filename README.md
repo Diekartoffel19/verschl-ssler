@@ -1,7 +1,9 @@
 # So funktioniert es:
 
-Um das Programm nutzen zu können, müssen Sie zunächst das Repository auf Ihren Computer klonen oder das Python-Skript herunterladen und in einem eigenen Ordner speichern. Ausserdem müssen Sie Python installiert haben und die requirements.txt mit dem folgenden Befehl installieren: pip install -r requirements.txt
-
+Um das Programm nutzen zu können, müssen Sie zunächst das Repository auf Ihren Computer klonen oder das Python-Skript herunterladen und in einem eigenen Ordner speichern. Ausserdem müssen Sie Python installiert haben und die requirements.txt mit dem folgenden Befehl installieren: 
+```
+pip install -r requirements.txt
+```
 Wenn Sie dieses README-File durchlesen und den Anweisungen im Programm folgen, sollte alles reibungslos laufen.
 
 Sobald eine Datei verschlüsselt ist, werden zwei Dateien erstellt: der verschlüsselte Text in der „output.txt” und der geheime Schlüssel in der „geheimer_schlussel.key”. Die Datei „output.txt” können Sie problemlos verschicken oder weitergeben.
