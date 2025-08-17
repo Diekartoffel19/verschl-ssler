@@ -1,5 +1,16 @@
 from cryptography.fernet import Fernet
 import os
+from PIL import Image
+import stepic
+
+
+def speichere_nachricht(verschluesselter_text):
+    """Speichert die verschlüsselte Nachricht in einer Textdatei."""
+    with open("verschluesselte_nachricht.txt", "wb") as f:
+        if isinstance(verschluesselter_text, str):
+            verschluesselter_text = verschluesselter_text.encode()
+        f.write(verschluesselter_text)
+    print("Nachricht wurde in 'verschluesselte_nachricht.txt' gespeichert.")
 
 def schlussel_machen():
     key = Fernet.generate_key()
@@ -11,114 +22,95 @@ def lade_schlussel():
         schlussel_machen()
     return open("geheimer_schlussel.key", "rb").read()
 
-def verschlusseln(nachricht_zu_verschlusseln, key):
-    byte_nachricht = nachricht_zu_verschlusseln.encode()
+def verschlusseln(text, key):
     f = Fernet(key)
-    verschlusselte_nacricht = f.encrypt(byte_nachricht)
-    return verschlusselte_nacricht
+    return f.encrypt(text.encode())
 
-def schreibe_in_datei(dateiname, text, key):
-    with open(dateiname, "w", encoding="utf-8") as f:
-        f.write(f"{text}\n")
-
-def nachricht_entschlusseln(verschlusselte_nachricht, key):
+def entschlusseln(verschluesselter_text, key):
     f = Fernet(key)
-    entschlusselte_nachricht = f.decrypt(verschlusselte_nachricht)
-    return entschlusselte_nachricht.decode()
+    return f.decrypt(verschluesselter_text).decode()
 
-def wenn_kein_schlussel_verschlusseln():
-    schlussel_machen()
-    schlussel = lade_schlussel()
-    text_zu_verschluesseln = input("Was möchtest du verschlüsseln? ")
-    verschluesselter_text = verschlusseln(text_zu_verschluesseln, schlussel)
-    print(verschluesselter_text)
-    print(f"key: {schlussel}")
-    schreibe_in_datei("output.txt", str(verschluesselter_text), schlussel)
+def verstecke_in_bild(bildpfad, text):
+    with Image.open(bildpfad) as img:
+        if isinstance(text, bytes):
+            text = text.decode()
+        img_mit_text = stepic.encode(img, text.encode())
+        img_mit_text.save("bild_mit_text.png")
 
-def wenn_schlussel_da_verschlusseln():
-    schlussel = input("bitte gebe den schlüssel ein: ").encode()
-    text_zu_kodieren = input("Was möchtest du kodieren? ")
-    verschluesselter_text = verschlusseln(text_zu_kodieren, schlussel)
-    print(verschluesselter_text)
-    schreibe_in_datei("output.txt", str(verschluesselter_text), schlussel)
 
-print("________________________________")
-print("Wilkommen zum text verschlüssler")
-print("________________________________")
+def text_aus_bild_holen(bildpfad):
+    with Image.open(bildpfad) as img:
+        return stepic.decode(img)
+
+
 
 while True:
-    while True:
-        eingabe = input("Möchtest du eine Nachricht ver- oder entschlüsseln? (v/e): ").lower()
-        if eingabe in ("v", "e"):
-            break
+    aktion = input("Verschlüsseln oder entschlüsseln? (v/e)? ")
+    if aktion not in ["v","e"]:
+        print("Ungültige Eingabe.")
+        continue
+    #verschlüsseln
+    if aktion == "v":
+        schluessel = input("Hast du einen eigenen Schlüssel (j/n)? ").lower()
+        if schluessel not in ["j", "n"]:
+            print("ungültige einageb")
+            continue
+        if schluessel == "j":
+            ladenfrage = input("Von einer Datei laden? (j/n): ")
+            if ladenfrage == "j":
+                key = lade_schlussel()
+
+            else:
+                key = input("Bitte gebe deinen schlüssel ein: ").encode()
+
+
         else:
-            print("Ungültige Eingabe! Bitte nur 'v' oder 'e' eingeben.")
+            key = lade_schlussel()
+            print(f"Der Schlüssel: {key.decode()} wurde geladen.")
+        
+        text = input("was gibt es zum verschlüsseln? ")
+        verschluesselter_text = verschlusseln(text, key)
+        print(f"Verschlüsselter Text: {verschluesselter_text}")
+        speichere_nachricht(verschluesselter_text)
 
-    if eingabe == "v":
-        while True:
-                mit_ohne_key = input("Hast du einen Schlüssel? (j/n): ").lower()
-                if mit_ohne_key not in ("j", "n"):
-                    print("Ungültige Eingabe! Bitte nur 'j' oder 'n' eingeben.")
-                elif mit_ohne_key == "j":
-                    quelle = input("Möchtest du den Schlüssel aus einer Datei laden? (j/n): ").lower()
-                    if quelle == "j":
-                        schlussel = lade_schlussel()
-                    else:
-                        schlussel = input("Bitte gebe den Schlüssel ein: ").encode()
-                    text_zu_kodieren = input("Was möchtest du kodieren? ")
-                    verschlüsselter_text = verschlusseln(text_zu_kodieren, schlussel)
-                    print(verschlüsselter_text)
-                    # Schreibe das Ergebnis als String in eine Datei
-                    schreibe_in_datei("output.txt", str(verschlüsselter_text), schlussel)
-                    break
-                elif mit_ohne_key == "n":
-                    wenn_kein_schlussel_verschlusseln()
-                    break # <<< MINIMALE ÄNDERUNG 1: HINZUGEFÜGT
-        # <<< MINIMALE ÄNDERUNG 2: DER FOLGENDE BLOCK WURDE ENTFERNT
-        # if mit_ohne_key == "j":
-        #     wenn_schlussel_da_verschlusseln()
-        # elif mit_ohne_key == "n":
-        #     wenn_kein_schlussel_verschlusseln()
+        in_bild = input("Soll die Nachricht noch in einem Bild versteckt werden? (j/n)").lower()
+        if in_bild not in ["j", "n"]:
+            print("Ungültige Eingabe.")
+            continue
+        if in_bild == "j":
+            bild_pfad = input("Was ist der Pfad zum PNG Bild? ")
+            verstecke_in_bild(bild_pfad, verschluesselter_text)
 
-    elif eingabe == "e":
-        schluessel = lade_schlussel()
-        with open("output.txt", "r", encoding="utf-8") as f:
-            zeilen = f.readlines()
-            verschluesselt = zeilen[0].strip()
 
-        eigene_eingabe = input("Möchtest du eigenen Schlüssel und/oder Text eingeben? (j/n): ").lower()
+    else:
+        aus_bild = input("Eine Nachricht aus einem Bild extarhieren? (j/n) ")
+        if aus_bild not in ["j", "n"]:
+            print("Ungültige Einagbe")
+        
+        if aus_bild == "j":
+            bild_pfad = input("Bitte den Pfad des Bildes eingeben: ")
+            verschluesselter_text = text_aus_bild_holen(bild_pfad).encode()
 
-        if eigene_eingabe == "j":
-            text_ent = input("Gib den verschlüsselten Text ein (Bytestring z.B. b'...' oder nur Inhalt, Enter für Standard): ")
-            key = input("Gib den Schlüssel ein (Enter für Standard): ")
-            if text_ent:
-                if text_ent.startswith("b'") and text_ent.endswith("'"):
-                    verschluesselt_bytes = eval(text_ent)
-                else:
-                    verschluesselt_bytes = text_ent.encode()
-            else:
-                if verschluesselt.startswith("b'") and verschluesselt.endswith("'"):
-                    verschluesselt_bytes = eval(verschluesselt)
-                else:
-                    verschluesselt_bytes = verschluesselt.encode()
-            if key:
-                key_bytes = key.encode()
-            else:
-                key_bytes = schluessel
         else:
-            if verschluesselt.startswith("b'") and verschluesselt.endswith("'"):
-                verschluesselt_bytes = eval(verschluesselt)
-            else:
-                verschluesselt_bytes = verschluesselt.encode()
-            key_bytes = schluessel
+            verschluesselter_text = input("Bitte verschlüsselten Text eingeben: ")
+
+        schluessel = input("Schlüssel aus Datei laden? (j/n): ")
+        if schluessel not in ["j", "n"]:
+            print("Ungültige Einagbe")
+
+        if schluessel == "n":
+            key = input("Bitte gebe den Schlüssel ein: ")
+
+        else:
+            key = lade_schlussel()
 
         try:
-            entschluesselt = nachricht_entschlusseln(verschluesselt_bytes, key_bytes)
-            print("Entschlüsselte Nachricht:", entschluesselt)
-        except Exception as e:
-            print("Fehler bei der Entschlüsselung:", e)
+            entschluesselter_text = entschlusseln(verschluesselter_text, key)
+            print(f"Entschlüsselter Text: {entschluesselter_text}")
 
-    weiter = input("Noch etwas machen? j/n ").lower()
-    if weiter == "n":
-        print("Programm zu Ende.")
+        except Exception as e:
+            print(f"Fehler beim entschlüsseln: {e}")
+
+
+    if input("Noch etwas (j/n): ").lower() != "j":
         break
